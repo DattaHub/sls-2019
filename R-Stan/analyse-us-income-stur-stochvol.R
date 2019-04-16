@@ -1,3 +1,34 @@
+## Install the following packages 
+## There are lots of duplicates and some of them won't be necessary 
+
+# install.packages("tidyverse")
+library(tidyverse)
+library(zoo)
+library(openxlsx)
+
+library(ggplot2)
+library(dplyr)
+library(magrittr) ## for the compund assignment operator %<>% : lhs %<>% rhs
+
+library(rstan)
+
+## Don't load the following packages unless you need them for any specific task
+if(F){
+  library(grid)
+  library(gridExtra)
+  library(scales)
+  library(ggthemes)
+  library(stringr)
+  library(lubridate)
+  library(readr)
+  library(knitr)
+  library(reshape2)
+  library(lazyeval)
+}
+
+
+
+#### Data Reading #####
 source("read-us-data-income.R")
 
 tab <- read_us_data_on_consumption_and_income()
@@ -38,7 +69,9 @@ abline(h=0, col="steelblue4")
 
 us_income_data =  list(y = tab$e,T=nrow(tab))
 
-## Stochastic Unit Root 
+##----------------------##
+## Stochastic Unit Root ##
+##----------------------##
 
 stur.fit <- stan(file = 'stur.stan', data = us_income_data)
 
@@ -48,12 +81,14 @@ stur.fit <- stan(file = 'stur.stan', data = us_income_data)
 mu_omega<- rstan::extract(stur.fit)[["mu_omega"]]
 hist(mu_omega, breaks=30, main="mu_omega", xlab="mu_omega", ylab="density")
 
-## Stochastic Volatility
+##------------------------##
+## Stochastic Volatility ##
+##-----------------------##
 
 sv.fit <- stan(file = 'stochvol.stan', data = us_income_data)
 
-# A unit root corresponds to mu-omega being positive,
-# therefore for stationarity we wish to know:
+## A unit root corresponds to mu-omega being positive,
+## therefore for stationarity we wish to know:
 
 phi.smpls <- rstan::extract(sv.fit)[["phi"]]
 hist(phi.smpls, breaks=30, main="phi", xlab="phi", ylab="density")
