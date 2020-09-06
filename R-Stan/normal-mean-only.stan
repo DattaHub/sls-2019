@@ -12,5 +12,7 @@ parameters {
 }
 
 model {
+    theta ~ normal(0, 1);
+    sigma ~ cauchy(0,5);
     y ~ normal(theta, sigma);
 }
